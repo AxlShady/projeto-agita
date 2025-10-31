@@ -1,65 +1,172 @@
+/* Variáveis de Cor da AGITA */
+:root {
+    --primary-blue: #002244; /* Azul Marinho Principal */
+    --secondary-orange: #ff6600; /* Laranja de Destaque */
+    --light-bg: #f4f7f9;
+}
+
+/* --- ESTILOS GERAIS DO PAINEL --- */
 .admin-dashboard {
-    max-width: 600px;
-    margin: 40px auto;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    background-color: var(--light-bg);
 }
 
 .admin-dashboard h1 {
-    color: #002244;
+    /* Título Principal em LARANJA (conforme solicitado) */
+    color: var(--secondary-orange); 
     text-align: center;
-}
-
-.admin-dashboard p {
-    text-align: center;
-    color: #666;
+    border-bottom: 2px solid var(--primary-blue);
+    padding-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .admin-dashboard h2 {
-    color: #ff6600;
+    /* Subtítulos (Lançamento de Notas, Documentos Enviados) em AZUL */
+    color: var(--primary-blue); 
     text-align: center;
     margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    padding-bottom: 5px;
 }
 
-.admin-dashboard form {
+/* --- MENU DE NAVEGAÇÃO (ABAS) --- */
+.tab-container {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary-blue);
+    flex-wrap: wrap; 
 }
 
-.admin-dashboard form div {
-    display: flex;
-    flex-direction: column;
-}
-
-.admin-dashboard label {
-    margin-bottom: 5px;
+.tab-button {
+    /* Define que os botões ocuparão o espaço todo (full-width) */
+    flex: 1; 
+    padding: 10px 15px;
+    border: none;
+    background-color: var(--primary-blue);
+    color: white; 
+    cursor: pointer;
+    font-size: 1em;
     font-weight: bold;
-    color: #002244;
+    transition: background-color 0.2s, border-bottom 0.3s;
+    border-radius: 0;
+    /* Adiciona a linha de fundo AZUL para o estado padrão */
+    border-bottom: 3px solid var(--primary-blue); 
 }
 
-.admin-dashboard input,
-.admin-dashboard textarea {
-    padding: 10px;
+.tab-button:hover {
+    background-color: #003366;
+}
+
+.tab-button.active {
+    /* Aba ativa tem fundo BRANCO, texto LARANJA e destaque inferior AZUL */
+    background-color: white; 
+    color: var(--secondary-orange); 
+    border-bottom: 3px solid var(--primary-blue); 
+}
+
+/* --- ESTILOS GERAIS DE FORMULÁRIO (Cards) --- */
+.form-card {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.admin-dashboard button {
-    padding: 12px;
-    background-color: #ff6600;
-    color: #fff;
+.forms-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.forms-container .form-card {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Estilo para Títulos dentro dos Cards */
+.form-card h2 {
+    color: var(--primary-blue); 
+    font-size: 1.3em;
+    border-bottom: 1px solid #eee;
+}
+
+/* Estilo para Labels (Nome do Usuário, Senha, Título do Evento, etc.) */
+.form-card label {
+    font-weight: bold;
+    color: var(--primary-blue); /* Inputs e Labels em AZUL */
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+/* Estilo para Inputs e Selects */
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 100%;
+    padding: 12px; 
+    border: 1px solid var(--primary-blue); /* Inputs com borda AZUL */
+    border-radius: 4px;
+    font-size: 1em; 
+    box-sizing: border-box; 
+    margin-top: 5px;
+}
+
+/* Estilo para Botões de Ação Principal */
+.form-card button[type="submit"] {
+    width: 100%;
+    padding: 12px 15px; 
+    margin-top: 15px;
+    background-color: var(--secondary-orange); /* Botões de Ação em LARANJA */
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 1.1em;
 }
 
-.admin-dashboard button:hover {
+.form-card button[type="submit"]:hover {
     background-color: #e65c00;
-} 
+}
+
+/* --- ESTILOS DE LISTAGEM --- */
+
+/* Separador */
+.separator {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 40px 0;
+}
+
+/* Lista de Atletas para Navegação */
+.athletes-list {
+    max-width: 400px;
+    margin: 10px auto;
+}
+
+.athlete-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; 
+    padding: 10px; 
+    border: 1px solid var(--primary-blue); 
+    margin-bottom: 8px; 
+    background-color: #fcfcfc;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.athlete-item:hover {
+    background-color: #e3f0ff; /* Azul claro para hover */
+}
+
+.details-link {
+    color: var(--secondary-orange); 
+    font-weight: bold;
+}

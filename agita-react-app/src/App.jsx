@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminDashboard from './AdminDashboard';
+import AdminDashboard from './AdminDashboard.jsx';
 import AthleteDashboard from './AthleteDashboard';
 import './App.css';
 

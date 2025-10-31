@@ -1,0 +1,51 @@
+/* Variáveis de Cor da AGITA (Para referência) */
+:root {
+    --primary-blue: #002244;
+    --secondary-orange: #ff6600;
+}
+
+.report-table-container {
+    margin-top: 20px;
+    overflow-x: auto; /* Permite rolar a tela em dispositivos menores */
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove o espaço entre as células */
+    font-size: 0.9em;
+    min-width: 700px; /* Garante que a tabela não fique muito pequena */
+}
+
+.report-table th,
+.report-table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.report-table thead tr {
+    background-color: var(--primary-blue); /* Fundo da Cabeçalho Azul */
+    color: white;
+}
+
+.report-table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.report-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Lista zebrada para melhor leitura */
+}
+
+/* Estilo para Botão de Ação */
+.report-delete-button {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.report-delete-button:hover {
+    background-color: #c82333;
+}
