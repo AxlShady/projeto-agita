@@ -1,0 +1,14 @@
+/* === Tema Global AGITA === */
+:root {
+    --primary-blue: #002244;     /* Azul Marinho Principal */
+    --secondary-orange: #ff6600; /* Laranja de Destaque */
+    --light-bg: #f4f7f9;
+}
+
+/* Estilo base global */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--primary-blue);
+}
