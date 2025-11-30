@@ -1,76 +1,193 @@
 import React, { useState, useEffect } from "react";
-import "./AthleteDashboard.css";
+import { useNavigate } from "react-router-dom";
+import './AthleteDashboard.css'; 
 
-function AthleteDashboard({ user, onLogout }) {
-  const [activeTab, setActiveTab] = useState("dados");
-  const [notas, setNotas] = useState([]);
-  const [pagamentos, setPagamentos] = useState([]);
-  const [eventos, setEventos] = useState([]);
-  const [documentos, setDocumentos] = useState([]);
+function AthleteDashboard() {
+  const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("dados"); 
+  const navigate = useNavigate();
+
+  const [events, setEvents] = useState([]);
+  const [grades, setGrades] = useState([]); 
+  const [payments, setPayments] = useState([]);
 
   useEffect(() => {
-    if (!user) return;
+    const storedUser = localStorage.getItem("user");
+    
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
 
-    const fetchNotas = async () => {
-      const res = await fetch(`http://localhost:3001/grades/${user.id}`);
-      setNotas(await res.json());
-    };
+      // Buscando dados...
+      fetch(`http://localhost:3001/events/athlete/${parsedUser.id}`)
+        .then((res) => res.json())
+        .then((data) => setEvents(data || []))
+        .catch((err) => console.error(err));
 
-    const fetchPagamentos = async () => {
-      const res = await fetch(`http://localhost:3001/payments/${user.id}`);
-      setPagamentos(await res.json());
-    };
+      fetch(`http://localhost:3001/grades/athlete/${parsedUser.id}`)
+        .then((res) => res.json())
+        .then((data) => setGrades(data || []))
+        .catch((err) => console.error(err));
 
-    const fetchEventos = async () => {
-      const res = await fetch("http://localhost:3001/events");
-      setEventos(await res.json());
-    };
+      fetch(`http://localhost:3001/payments/athlete/${parsedUser.id}`)
+        .then((res) => res.json())
+        .then((data) => setPayments(data || []))
+        .catch((err) => console.error(err));
 
-    const fetchDocumentos = async () => {
-      const res = await fetch(`http://localhost:3001/documents/${user.id}`);
-      setDocumentos(await res.json());
-    };
-
-    fetchNotas();
-    fetchPagamentos();
-    fetchEventos();
-    fetchDocumentos();
-  }, [user]);
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "dados":
-        return <div>Informações pessoais do atleta</div>;
-      case "notas":
-        return <pre>{JSON.stringify(notas, null, 2)}</pre>;
-      case "pagamentos":
-        return <pre>{JSON.stringify(pagamentos, null, 2)}</pre>;
-      case "documentos":
-        return <pre>{JSON.stringify(documentos, null, 2)}</pre>;
-      case "eventos":
-        return <pre>{JSON.stringify(eventos, null, 2)}</pre>;
-      default:
-        return <div>Selecione uma aba</div>;
+    } else {
+      navigate("/login");
     }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
   };
+
+  const getStatusClass = (status) => {
+      if (!status) return '';
+      const s = status.toLowerCase();
+      return s === 'pago' ? 'status-pago' : s === 'pendente' ? 'status-pendente' : 'status-atrasado';
+  };
+
+  if (!user) return <div className="loading-container">Carregando...</div>;
 
   return (
     <div className="athlete-dashboard">
-      <div className="sidebar">
-        <h3>AGITA - Atleta</h3>
-        <nav>
-          <button onClick={() => setActiveTab("dados")} className={activeTab === "dados" ? "active" : ""}>Meus Dados</button>
-          <button onClick={() => setActiveTab("notas")} className={activeTab === "notas" ? "active" : ""}>Notas</button>
-          <button onClick={() => setActiveTab("pagamentos")} className={activeTab === "pagamentos" ? "active" : ""}>Pagamentos</button>
-          <button onClick={() => setActiveTab("documentos")} className={activeTab === "documentos" ? "active" : ""}>Documentos</button>
-          <button onClick={() => setActiveTab("eventos")} className={activeTab === "eventos" ? "active" : ""}>Eventos</button>
-        </nav>
-        <div className="sidebar-footer">
-          {user && <p>Logado como: <strong>{user.username}</strong></p>}
-          <button onClick={onLogout} className="logout-button">Sair</button>
+      
+      {/* CABEÇALHO */}
+      <header className="athlete-header">
+        <div className="header-logo">
+          <h2>AGITA <span>Atleta</span></h2>
         </div>
-      </div>
-      <main className="main-content">{renderContent()}</main>
+        
+        <nav className="header-nav">
+          <button className={activeTab === 'dados' ? 'active' : ''} onClick={() => setActiveTab('dados')}>Meus Dados</button>
+          <button className={activeTab === 'notas' ? 'active' : ''} onClick={() => setActiveTab('notas')}>Notas</button>
+          <button className={activeTab === 'pagamentos' ? 'active' : ''} onClick={() => setActiveTab('pagamentos')}>Pagamentos</button>
+          <button className={activeTab === 'events' ? 'active' : ''} onClick={() => setActiveTab('events')}>Eventos</button>
+        </nav>
+
+        <div className="header-user">
+          <span>Olá, <strong>{user.username}</strong></span>
+          <button onClick={handleLogout} className="btn-logout">Sair</button>
+        </div>
+      </header>
+
+      {/* CONTEÚDO */}
+      <main className="athlete-content">
+        
+        {/* MEUS DADOS */}
+        {activeTab === 'dados' && (
+           <div className="content-pane fade-in">
+             <h3 className="page-title">Meus Dados Cadastrais</h3>
+             <div className="card profile-card">
+                <div className="info-row">
+                    <label>Nome Completo</label>
+                    <p className="text-primary">{user.username}</p>
+                </div>
+                <div className="info-row">
+                    <label>Matrícula</label>
+                    <p>#{user.id}</p>
+                </div>
+                <div className="info-row">
+                    <label>Categoria</label>
+                    <p className="text-highlight">{user.category || 'Não definida'}</p>
+                </div>
+                <div className="info-row no-border">
+                    <label>Situação</label>
+                    <p className="text-success">Ativo</p>
+                </div>
+             </div>
+           </div>
+        )}
+
+        {/* NOTAS */}
+        {activeTab === 'notas' && (
+            <div className="content-pane fade-in">
+                <h3 className="page-title">Minhas Avaliações</h3>
+                {grades.length > 0 ? (
+                    <div className="card table-container">
+                        <table className="agita-table">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Aparelho</th>
+                                    <th>Data</th>
+                                    <th>Nota</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {grades.map((grade) => (
+                                    <tr key={grade.id}>
+                                        <td>{grade.event_name || 'Evento'}</td>
+                                        <td>{grade.apparatus_id}</td>
+                                        <td>{new Date(grade.evaluation_date).toLocaleDateString()}</td>
+                                        <td><span className="grade-badge">{grade.score}</span></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : ( <div className="empty-state">Nenhuma nota lançada ainda.</div> )}
+            </div>
+        )}
+
+        {/* PAGAMENTOS */}
+        {activeTab === 'pagamentos' && (
+            <div className="content-pane fade-in">
+                <h3 className="page-title">Histórico Financeiro</h3>
+                {payments.length > 0 ? (
+                    <div className="card table-container">
+                        <table className="agita-table">
+                            <thead>
+                                <tr>
+                                    <th>Referência</th>
+                                    <th>Valor</th>
+                                    <th>Vencimento</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {payments.map((pay) => (
+                                    <tr key={pay.id}>
+                                        <td>{pay.reference_month}</td>
+                                        <td className="text-bold">R$ {pay.amount}</td>
+                                        <td>{new Date(pay.due_date).toLocaleDateString()}</td>
+                                        <td>
+                                            <span className={`status-badge ${getStatusClass(pay.status)}`}>
+                                                {pay.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : ( <div className="empty-state">Nenhum pagamento registrado.</div> )}
+            </div>
+        )}
+
+        {/* EVENTOS */}
+        {activeTab === 'events' && (
+          <div className="content-pane fade-in">
+            <h3 className="page-title">Minhas Competições</h3>
+            <div className="events-grid">
+              {events.length > 0 ? (
+                events.map((event) => (
+                  <div key={event.id} className="card event-card">
+                    <h4>{event.name || event.title}</h4>
+                    <p><strong>Data:</strong> {new Date(event.event_date || event.date).toLocaleDateString()}</p>
+                    <p><strong>Local:</strong> {event.location}</p>
+                    {event.description && <p className="description">{event.description}</p>}
+                  </div>
+                ))
+              ) : ( <div className="empty-state">Nenhum evento programado.</div> )}
+            </div>
+          </div>
+        )}
+
+      </main>
     </div>
   );
 }

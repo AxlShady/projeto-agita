@@ -1,18 +1,24 @@
-// backend/routes/gradeRoutes.js
 const express = require('express');
 const router = express.Router();
 const gradeController = require('../controllers/gradeController');
 
-// MUDANÇA IMPORTANTE:
-// Antes: router.get('/report', ...)
-// Agora: router.get('/', ...)
-//
-// O server.js já usa o prefixo /grades-report, 
-// então a rota / vai corresponder a GET /grades-report
-router.get('/', gradeController.getGradesReport); // <-- ROTA CORRIGIDA
+// Verifica se o controller carregou certo (ajuda a achar erros)
+if (!gradeController) {
+    console.error("ERRO CRÍTICO: gradeController não foi importado corretamente.");
+}
 
-router.get('/:userId', gradeController.getGradesByUserId); // Esta deve funcionar (era /report/:userId)
-router.post('/create', gradeController.createGrade);
+// --- Rota para CRIAR nota (POST) ---
+// Certifique-se que gradeController.createGrade existe
+router.post('/', gradeController.createGrade);
+
+// --- Rota para LISTAR TODAS as notas (GET) ---
+router.get('/', gradeController.getAllGrades);
+
+// --- Rota para LISTAR notas de um ATLETA ESPECÍFICO (GET) ---
+// Esta foi a função nova que adicionamos. Se o controller antigo estiver salvo, isso dá erro.
+router.get('/athlete/:userId', gradeController.getGradesByAthlete);
+
+// --- Rota para DELETAR nota (DELETE) ---
 router.delete('/:id', gradeController.deleteGrade);
 
 module.exports = router;

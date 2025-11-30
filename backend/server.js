@@ -22,7 +22,7 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 5. Uso das Rotas
-app.use('/', authRoutes);
+app.use('/api', authRoutes);
 app.use('/events', eventRoutes);
 app.use('/grades', gradeRoutes); 
 app.use('/grades-report', gradeRoutes);

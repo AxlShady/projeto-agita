@@ -1,105 +1,236 @@
-@import '../styles/theme.css';
+/* --- CORES DA MARCA AGITA (Igual ao Atleta) --- */
+:root {
+    --agita-blue: #001524;       /* Azul Noturno */
+    --agita-orange: #ff6600;     /* Laranja Vibrante */
+    --bg-page: #eef1f5;          /* Fundo Cinza Azulado */
+    --card-bg: #ffffff;          
+    
+    --text-main: #2c3e50;
+    --text-muted: #607d8b;
+    --border-color: #e0e0e0;
+}
 
-/* --- ESTILOS GERAIS DO PAINEL --- */
+/* --- LAYOUT GERAL --- */
 .admin-dashboard {
-    padding: 20px;
-    background-color: var(--light-bg);
-}
-
-/* Títulos */
-.admin-dashboard h1 {
-    color: var(--secondary-orange);
-    text-align: center;
-    border-bottom: 2px solid var(--primary-blue);
-    padding-bottom: 10px;
-    margin-bottom: 5px;
-}
-
-.admin-dashboard h2 {
-    color: var(--primary-blue);
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
-
-/* --- MENU DE ABAS --- */
-.tab-container {
+    background-color: var(--bg-page);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-main);
     display: flex;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--primary-blue);
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-.tab-button {
-    flex: 1;
-    padding: 10px 15px;
-    border: none;
-    background-color: var(--primary-blue);
+/* --- CABEÇALHO SUPERIOR (Igual ao Atleta) --- */
+.admin-header {
+    background-color: var(--agita-blue);
     color: white;
+    height: 70px;
+    padding: 0 40px; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.header-logo h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+}
+
+.header-logo span {
+    color: var(--agita-orange);
+    font-weight: 900;
+}
+
+/* Navegação Central (Horizontal) */
+.admin-nav {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    align-items: center;
+}
+
+.admin-nav button {
+    background: transparent;
+    border: none;
+    color: #aabbc9;
+    font-size: 1rem;
+    padding: 0 10px;
+    height: 100%;
     cursor: pointer;
-    font-size: 1em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+}
+
+.admin-nav button:hover {
+    color: white;
+}
+
+.admin-nav button.active {
+    color: white;
+    border-bottom: 4px solid var(--agita-orange);
+    font-weight: 700;
+}
+
+/* User Info (Direita) */
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-logout {
+    background-color: transparent;
+    border: 1px solid var(--agita-orange);
+    color: var(--agita-orange);
+    padding: 6px 20px;
+    border-radius: 4px;
+    cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.2s, border-bottom 0.3s;
+    font-size: 0.9rem;
+    transition: 0.3s;
 }
 
-.tab-button:hover {
-    background-color: #003366;
-}
-
-.tab-button.active {
-    background-color: white;
-    color: var(--secondary-orange);
-    border-bottom: 3px solid var(--primary-blue);
+.btn-logout:hover {
+    background-color: var(--agita-orange);
+    color: white;
 }
 
 /* --- CONTEÚDO PRINCIPAL --- */
-.main-content, .dashboard-content {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-/* --- FORMULÁRIOS E LISTAS --- */
-.form-card {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.form-card label {
-    display: block;
-    font-weight: bold;
-    color: var(--primary-blue);
-    margin-bottom: 5px;
-}
-
-.form-card input,
-.form-card select,
-.form-card textarea {
+.admin-content {
+    max-width: 1200px; /* Um pouco mais largo que o atleta pois tem tabelas grandes */
+    margin: 40px auto;
+    padding: 0 20px;
     width: 100%;
-    padding: 10px;
-    border: 1px solid var(--primary-blue);
-    border-radius: 4px;
-    margin-bottom: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-.form-card button[type="submit"] {
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Títulos */
+.section-title {
+    color: var(--agita-blue);
+    border-left: 6px solid var(--agita-orange);
+    padding-left: 15px;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* --- ESTILOS GERAIS PARA FORMULÁRIOS E TABELAS (Uniformização) --- */
+
+/* Cards */
+.form-card, .table-card, .card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    padding: 30px;
+    margin-bottom: 25px;
+    border: none; /* Sem borda cinza */
+}
+
+.form-card h2, .form-card h3, .table-card h3 {
+    color: var(--agita-blue);
+    margin-top: 0;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+/* Inputs */
+input, select, textarea {
     width: 100%;
     padding: 12px;
-    background-color: var(--secondary-orange);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.1em;
-    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fcfcfc;
+    transition: 0.3s;
+    box-sizing: border-box;
+    font-family: inherit; /* Garante a mesma fonte */
 }
 
-.form-card button[type="submit"]:hover {
-    background-color: #e65c00;
+input:focus, select:focus, textarea:focus {
+    border-color: var(--agita-orange);
+    outline: none;
+    background-color: white;
 }
+
+label {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-group { margin-bottom: 15px; }
+
+/* Botões Principais */
+.button-primary, .btn-primary, .btn-submit {
+    background-color: var(--agita-orange);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.button-primary:hover, .btn-primary:hover, .btn-submit:hover {
+    background-color: #e65c00; /* Laranja mais escuro */
+}
+
+/* Tabelas */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background-color: var(--agita-blue);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+}
+
+.data-table tr:hover { background-color: #fafafa; }
+
+/* Botões Pequenos (Tabela) */
+.btn-action, .button-danger {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-action { background-color: var(--agita-blue); color: white; }
+.button-danger { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.button-danger:hover { background-color: #e53935; color: white; }

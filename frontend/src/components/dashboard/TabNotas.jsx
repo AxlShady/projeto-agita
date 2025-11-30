@@ -1,133 +1,151 @@
-// frontend/src/components/dashboard/TabNotas.jsx
 import React, { useState, useEffect } from 'react';
-import ReportTable from '../ReportTable.jsx';
-import * as api from '../../services/apiService.js';
 
-// O estado inicial do formulário vive AQUI agora
-const initialGradeForm = {
-  user_id: '',
-  age_category_id: '',
-  apparatus_id: '',
-  event_id: '',
-  score: '',
-  evaluation_date: new Date().toISOString().split('T')[0]
-};
+function TabNotas({ athletes, events }) {
 
-function TabNotas({ athletes = [] }) {
-  // --- Estados da Aba NOTAS ---
-  const [ageCategories, setAgeCategories] = useState([]); 
-  const [apparatusList, setApparatusList] = useState([]); 
-  const [eventsList, setEventsList] = useState([]);
-  const [gradeMessage, setGradeMessage] = useState(''); 
-  const [gradeForm, setGradeForm] = useState(initialGradeForm);
-  const [gradesReport, setGradesReport] = useState([]);
+  const [selectedAthlete, setSelectedAthlete] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState('');
+  const [category, setCategory] = useState('Mirim');
+  const [apparatus, setApparatus] = useState('Mãos Livres');
+  const [score, setScore] = useState('');
+  const [date, setDate] = useState('');
+  const [message, setMessage] = useState('');
+  const [grades, setGrades] = useState([]);
 
-  // --- Busca os dados necessários para esta aba ---
   useEffect(() => {
-    console.log("TabNotas montado. Buscando dados para formulários...");
-    
-    // Busca os dados que os dropdowns precisam
-    api.fetchAgeCategories().then(setAgeCategories);
-    api.fetchApparatusList().then(setApparatusList);
-    api.fetchEventsList().then(setEventsList);
-    
-    // Busca o relatório inicial
-    api.fetchGradesReport().then(setGradesReport);
-    
-  }, []); // O [] garante que isso roda só uma vez
+      fetchGrades();
+  }, []);
 
-  // --- Funções de Ação de NOTAS ---
-  const handleGradeFormChange = (e) => {
-    const { name, value } = e.target;
-    setGradeForm(prevForm => ({ ...prevForm, [name]: value }));
+  const fetchGrades = async () => {
+      try {
+          const res = await fetch("http://localhost:3001/grades");
+          if(res.ok) {
+            const data = await res.json();
+            setGrades(data);
+          }
+      } catch (err) { console.error(err); }
   };
 
   const handleCreateGrade = async (e) => {
-    e.preventDefault();
-    setGradeMessage('Salvando nota...');
-    
-    api.createGrade(gradeForm)
-        .then(data => {
-            setGradeMessage(data.message);
-            setGradeForm(initialGradeForm); 
-            api.fetchGradesReport().then(setGradesReport); // Re-busca os dados
-        })
-        .catch(err => {
-            setGradeMessage(`Erro: ${err.message || 'Falha ao salvar.'}`);
-        });
+      e.preventDefault();
+      if(!selectedAthlete || !selectedEvent || !score) {
+          alert("Preencha todos os campos!");
+          return;
+      }
+      setMessage('Enviando...');
+      const gradeData = { user_id: selectedAthlete, event_id: selectedEvent, category, apparatus, score, date_graded: date };
+
+      try {
+          const response = await fetch("http://localhost:3001/grades", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(gradeData)
+          });
+          if (response.ok) {
+              setMessage("Nota lançada!");
+              setScore(''); 
+              fetchGrades(); 
+              setTimeout(() => setMessage(''), 3000);
+          } else { setMessage("Erro ao lançar."); }
+      } catch (error) { console.error(error); }
   };
 
-  const handleDeleteGrade = (gradeId) => {
-    if (!window.confirm('Tem certeza que deseja excluir esta nota?')) return;
-    
-    api.deleteGrade(gradeId)
-        .then(data => {
-            alert(data.message || 'Nota excluída com sucesso!');
-            setGradesReport(gradesReport.filter(grade => grade.id !== gradeId));
-        })
-        .catch(err => {
-            alert(`Erro: ${err.message}`);
-        });
+  const handleDeleteGrade = async (id) => {
+      if(!window.confirm("Excluir nota?")) return;
+      try {
+          const response = await fetch(`http://localhost:3001/grades/${id}`, { method: "DELETE" });
+          if(response.ok) fetchGrades();
+      } catch (error) { console.error(error); }
   };
-  
-  // --- JSX de Renderização ---
+
   return (
     <div className="tab-content">
-      <div className="form-card">
-        <h2 className="section-title">Lançamento de Notas</h2>
-        {/* O JSX usa as funções LOCAIS (handleCreateGrade, etc.) */}
-        <form onSubmit={handleCreateGrade} className="grades-form">
-          <div className="form-row">
+      {/* REMOVI O TÍTULO DAQUI PARA NÃO DUPLICAR */}
+      
+      <div className="forms-container">
+        
+        {/* --- FORMULÁRIO --- */}
+        <div className="form-card">
+          <h3>Nova Avaliação</h3>
+          <form onSubmit={handleCreateGrade}>
             <div className="form-group">
               <label>Atleta</label>
-              <select name="user_id" value={gradeForm.user_id} onChange={handleGradeFormChange} required>
-                <option value="">Selecione um atleta</option>
-                {athletes.map(a => <option key={a.id} value={a.id}>{a.username}</option>)}
+              <select value={selectedAthlete} onChange={(e) => setSelectedAthlete(e.target.value)} required>
+                  <option value="">Selecione...</option>
+                  {athletes && athletes.map(atl => (
+                      <option key={atl.id} value={atl.id}>{atl.username} ({atl.category})</option>
+                  ))}
               </select>
             </div>
+
             <div className="form-group">
               <label>Evento</label>
-              <select name="event_id" value={gradeForm.event_id} onChange={handleGradeFormChange} required>
-                <option value="">Selecione um evento</option>
-                {eventsList.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
+              <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} required>
+                  <option value="">Selecione...</option>
+                  {events && events.map(ev => (
+                      <option key={ev.id} value={ev.id}>
+                          {ev.title || ev.name} - {new Date(ev.event_date || ev.date).toLocaleDateString()}
+                      </option>
+                  ))}
               </select>
             </div>
-          </div>
-          <div className="form-row">
+
             <div className="form-group">
-              <label>Categoria (Idade)</label>
-              <select name="age_category_id" value={gradeForm.age_category_id} onChange={handleGradeFormChange} required>
-                <option value="">Selecione a categoria</option>
-                {ageCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+                <label>Aparelho</label>
+                <select value={apparatus} onChange={(e) => setApparatus(e.target.value)}>
+                    <option>Mãos Livres</option><option>Corda</option><option>Arco</option>
+                    <option>Bola</option><option>Maças</option><option>Fita</option>
+                </select>
             </div>
+
             <div className="form-group">
-              <label>Aparelho</label>
-              <select name="apparatus_id" value={gradeForm.apparatus_id} onChange={handleGradeFormChange} required>
-                <option value="">Selecione o aparelho</option>
-                {apparatusList.map(ap => <option key={ap.id} value={ap.id}>{ap.name}</option>)}
-              </select>
+              <label>Nota</label>
+              <input type="number" step="0.01" value={score} onChange={(e) => setScore(e.target.value)} required />
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Nota (Ex: 8.50)</label>
-              <input type="number" step="0.01" name="score" value={gradeForm.score} onChange={handleGradeFormChange} required />
-            </div>
+
             <div className="form-group">
               <label>Data da Avaliação</label>
-              <input type="date" name="evaluation_date" value={gradeForm.evaluation_date} onChange={handleGradeFormChange} required />
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
             </div>
-          </div>
-          <button type="submit" className="button-primary">Lançar Nota</button>
-          {gradeMessage && <p className="feedback-message">{gradeMessage}</p>}
-        </form>
+
+            <button type="submit" className="button-primary">Lançar Nota</button>
+            {message && <p className="feedback-message">{message}</p>}
+          </form>
+        </div>
+
+        {/* --- TABELA --- */}
+        <div className="table-card">
+            <h3>Histórico de Notas ({grades.length})</h3>
+            <div className="event-list">
+                {grades.length > 0 ? (
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Atleta</th>
+                                <th>Evento</th>
+                                <th>Aparelho</th>
+                                <th>Nota</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {grades.map(grade => (
+                                <tr key={grade.id}>
+                                    <td>{grade.username || grade.user_id}</td>
+                                    <td>{grade.event_name || grade.title}</td>
+                                    <td>{grade.apparatus_id}</td>
+                                    <td><strong>{grade.score}</strong></td>
+                                    <td>
+                                        <button onClick={() => handleDeleteGrade(grade.id)} className="button-danger">Excluir</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : ( <p>Nenhuma nota lançada.</p> )}
+            </div>
+        </div>
+
       </div>
-      
-      <hr className="separator" />
-      
-      <h2 className="section-title">Histórico de Notas ({gradesReport.length})</h2>
-      <ReportTable reportType="grades" data={gradesReport} onDelete={handleDeleteGrade} />
     </div>
   );
 }

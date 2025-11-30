@@ -1,0 +1,165 @@
+/* --- TEMA DARK AGITA (Azul e Laranja) --- */
+
+/* Fundo da Página inteira (Azul Quase Preto) */
+.login-page-container {
+    background-color: #000b14; 
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* O Cartão de Login (Azul da Marca) */
+.login-box {
+    background-color: #001524; /* Azul Noturno */
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 15px;
+    /* Sombra laranja suave atrás para dar um brilho moderno */
+    box-shadow: 0 0 30px rgba(255, 102, 0, 0.15); 
+    text-align: center;
+    border-top: 6px solid #ff6600; /* Topo Laranja */
+    border-bottom: 1px solid #ff6600; /* Detalhe sutil embaixo */
+}
+
+/* Cabeçalho do Card */
+.login-brand h2 {
+    color: #ffffff; /* Texto Branco */
+    font-size: 2.2rem;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.brand-highlight {
+    color: #ff6600; /* Laranja */
+}
+
+.login-brand p {
+    color: #a0b3c6; /* Cinza azulado claro */
+    font-size: 0.95rem;
+    margin-top: 5px;
+    margin-bottom: 35px;
+}
+
+/* Inputs e Labels */
+.login-form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    color: #ff6600; /* Label Laranja para destaque */
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.styled-input {
+    width: 100%;
+    padding: 14px 15px;
+    /* Fundo do input mais claro que o cartão, mas ainda escuro */
+    background-color: #0b2535; 
+    border: 1px solid #1c3d52;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: white; /* Texto digitado branco */
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.styled-input::placeholder {
+    color: #546e7a; /* Placeholder discreto */
+}
+
+.styled-input:focus {
+    outline: none;
+    border-color: #ff6600; /* Borda laranja ao clicar */
+    background-color: #0f2d40;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.2);
+}
+
+/* Botão Entrar */
+.btn-entrar {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-entrar:hover {
+    background-color: #ff8533; /* Laranja mais claro no hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+}
+
+/* Mensagem de Erro */
+.error-alert {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff6b6b;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    border: 1px solid #ff6b6b;
+    margin-top: 20px;
+} 
+
+/* ... (Mantenha o restante do seu CSS Dark que fizemos antes) ... */
+
+/* Adicione esta classe para a logo */
+.login-logo {
+    max-width: 150px;  /* Tamanho máximo (ajuste conforme sua logo) */
+    height: auto;      /* Mantém a proporção */
+    margin-bottom: 15px; /* Espaço entre a logo e o texto */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Ajuste no título para não ficar colado demais na logo */
+.login-brand h2 {
+    color: #ffffff;
+    font-size: 2.2rem;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* ... (Restante do código igual) ... */ 
+
+/* Estilo para o link de "Voltar" */
+.link-voltar {
+    margin-top: 10px;
+    color: #a0b3c6; /* Cor do link (Azul claro discreto) */
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+    text-align: center;
+}
+
+.link-voltar:hover {
+    color: white; /* Fica branco ao passar o mouse */
+}

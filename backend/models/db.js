@@ -4,10 +4,11 @@ const mysql = require('mysql2');
 
 // Configuração do Banco de Dados
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: 'centerbeam.proxy.rlwy.net',
+    port: 41067,
     user: 'root',
-    password: '_12_07_25!', // Sua senha
-    database: 'agita_db'
+    password: 'czfNILjRdUSXzIYtyZdBLMTAkpThRQMO', // Sua senha
+    database: 'railway'
 });
 
 // Conecta ao Banco de Dados

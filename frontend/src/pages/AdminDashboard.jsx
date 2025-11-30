@@ -3,107 +3,137 @@ import './AdminDashboard.css';
 import AthleteDetails from './AthleteDetails.jsx'; 
 import * as api from '../services/apiService.js';
 
-// Importa todas as abas
+// Abas
 import TabCadastro from '../components/dashboard/TabCadastro.jsx';
 import TabEventos from '../components/dashboard/TabEventos.jsx'; 
 import TabNotas from '../components/dashboard/TabNotas.jsx';
 import TabPagamentos from '../components/dashboard/TabPagamentos.jsx';
-import TabDocumentos from '../components/dashboard/TabDocumentos.jsx';
 
-// Todos os 'initialForm' foram movidos para seus respectivos componentes.
-
-// Este é o usuário "falso" do teste
 const testUser = { 
-  id: 1, 
-  username: 'admin_teste', 
-  user_type: 'admin' 
+  id: 1, 
+  username: 'Admin', 
+  user_type: 'admin' 
 };
 
 function AdminDashboard({ user = testUser, onLogout = () => console.log('Logout!') }) {
-  
-  // --- Estados de Controle e Dados ---
-  // Todos os estados das abas foram MOVIDOS para seus componentes filhos.
-  const [activeTab, setActiveTab] = useState('cadastro'); 
-  const [athletes, setAthletes] = useState([]); // O único estado que é compartilhado
-  const [selectedAthleteId, setSelectedAthleteId] = useState(null); 
-  
-  // useEffect agora só busca os dados compartilhados
+  
+  const [activeTab, setActiveTab] = useState('cadastro'); 
+  const [athletes, setAthletes] = useState([]); 
+  const [events, setEvents] = useState([]); 
+  const [selectedAthleteId, setSelectedAthleteId] = useState(null); 
+  
   useEffect(() => {
-      console.log("AdminDashboard montado. Buscando dados compartilhados...");
+      const fetchData = async () => {
+        try {
+          const athletesData = await api.fetchAthletes();
+          setAthletes(athletesData);
+          
+          const resEvents = await fetch("http://localhost:3001/events");
+          const eventsData = await resEvents.json();
+          setEvents(eventsData);
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
+        }
+      };
+      fetchData();
+  }, []);
 
-      const fetchData = async () => {
-        try {
-          // Só busca os dados que TODOS os filhos precisam (atletas)
-          const athletesData = await api.fetchAthletes();
-          console.log("Atletas recebidos:", athletesData); 
-          setAthletes(athletesData);
-          
-        } catch (error) {
-          console.error("ERRO GRAVE ao buscar dados no useEffect:", error);
-        }
-      };
+  // Renderiza o conteúdo central
+  const renderContent = () => {
+    if (selectedAthleteId) {
+        return <AthleteDetails userId={selectedAthleteId} onBack={() => setSelectedAthleteId(null)} />;
+    }
 
-      fetchData();
-  }, []); // O [] garante que isso só roda UMA VEZ
+    switch (activeTab) {
+      case 'cadastro':
+        return (
+          <div className="fade-in">
+             <h2 className="section-title">Cadastro de Atletas</h2>
+             <TabCadastro 
+                athletes={athletes} 
+                onSelectAthlete={setSelectedAthleteId}
+                onRegistrationSuccess={() => api.fetchAthletes().then(setAthletes)} 
+             />
+          </div>
+        );
 
-// --- FUNÇÕES DE AÇÃO ---
-// TODAS as funções (handleCreateEvent, handleCreateGrade, etc.) 
-// foram MOVIDAS para seus respectivos componentes de aba.
+      case 'eventos':
+        return (
+            <div className="fade-in">
+                <h2 className="section-title">Gestão de Eventos</h2>
+                <TabEventos athletes={athletes} />
+            </div>
+        );
 
-// --- FUNÇÃO DE RENDERIZAÇÃO DO CONTEÚDO (SUPER LIMPA) ---
-  const renderContent = () => {
-    
-    if (selectedAthleteId) {
-        return <AthleteDetails userId={selectedAthleteId} onBack={() => setSelectedAthleteId(null)} />;
-    }
+      case 'notas':
+        return (
+            <div className="fade-in">
+                <h2 className="section-title">Lançamento de Notas</h2>
+                {/* Passando athletes e events para o TabNotas */}
+                <TabNotas athletes={athletes} events={events} />
+            </div>
+        );
 
-    switch (activeTab) {
-      case 'cadastro':
-        return (
-          <TabCadastro 
-            athletes={athletes} // Passa a lista de atletas
-            onSelectAthlete={setSelectedAthleteId}
-            onRegistrationSuccess={() => api.fetchAthletes().then(setAthletes)} // Função para atualizar a lista
-          />
-        );
+      case 'pagamentos':
+        return (
+            <div className="fade-in">
+                <h2 className="section-title">Gestão Financeira</h2>
+                <TabPagamentos athletes={athletes} />
+            </div>
+        );
 
-      case 'eventos':
-        return <TabEventos />; // Componente independente
+      default:
+        return <div className="empty-state">Selecione uma opção.</div>;
+    }
+  };
 
-      case 'notas':
-        return <TabNotas athletes={athletes} />; // Passa a lista de atletas
+  return (
+    <div className="admin-dashboard">
+      
+      {/* --- CABEÇALHO SUPERIOR (Igual ao Atleta) --- */}
+      <header className="admin-header">
+        <div className="header-logo">
+            <h2>AGITA <span>Admin</span></h2>
+        </div>
+        
+        <nav className="admin-nav">
+          <button 
+            onClick={() => setActiveTab('cadastro')} 
+            className={activeTab === 'cadastro' ? 'active' : ''}
+          >
+            Atletas
+          </button>
+          <button 
+            onClick={() => setActiveTab('eventos')} 
+            className={activeTab === 'eventos' ? 'active' : ''}
+          >
+            Eventos
+          </button>
+          <button 
+            onClick={() => setActiveTab('notas')} 
+            className={activeTab === 'notas' ? 'active' : ''}
+          >
+            Notas
+          </button>
+          <button 
+            onClick={() => setActiveTab('pagamentos')} 
+            className={activeTab === 'pagamentos' ? 'active' : ''}
+          >
+            Pagamentos
+          </button>
+        </nav>
 
-      case 'pagamentos':
-        return <TabPagamentos athletes={athletes} />; // Passa a lista de atletas
+        <div className="header-user">
+          <span>Olá, <strong>{user.username}</strong></span>
+          <button onClick={onLogout} className="btn-logout">Sair</button>
+        </div>
+      </header>
 
-      case 'documentos': 
-        return <TabDocumentos athletes={athletes} />; // Passa a lista de atletas
-
-      default:
-        return <div>Selecione uma opção no menu.</div>;
-    }
-  };
-
-  // --- O JSX Principal (Sidebar e Conteúdo) ---
-  return (
-    <div className="admin-dashboard">
-      <div className="sidebar">
-        <h3>AGITA - Admin</h3>
-        <nav>
-          <button onClick={() => setActiveTab('cadastro')} className={activeTab === 'cadastro' ? 'active' : ''}>Cadastro de Atletas</button>
-          <button onClick={() => setActiveTab('eventos')} className={activeTab === 'eventos' ? 'active' : ''}>Eventos e Categorias</button>
-          <button onClick={() => setActiveTab('notas')} className={activeTab === 'notas' ? 'active' : ''}>Lançar Notas</button>
-          <button onClick={() => setActiveTab('pagamentos')} className={activeTab === 'pagamentos' ? 'active' : ''}>Pagamentos</button>
-          <button onClick={() => setActiveTab('documentos')} className={activeTab === 'documentos' ? 'active' : ''}>Documentos</button>
-        </nav>
-        <div className="sidebar-footer">
-          {user && <p>Logado como: <strong>{user.username}</strong></p>}
-      <button onClick={onLogout} className="logout-button">Sair</button>
-     </div>
-      </div>
-      <main className="main-content">
+      {/* --- CONTEÚDO PRINCIPAL --- */}
+      <main className="admin-content">
        {renderContent()}
       </main>
+
     </div>
   );
 }

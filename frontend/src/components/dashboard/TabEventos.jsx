@@ -1,121 +1,188 @@
 import React, { useState, useEffect } from 'react';
-import * as api from '../../services/apiService.js';
 
-// Este componente é "controlado" pelo AdminDashboard.
-// Ele recebe os valores (states) e as funções (handlers) via props.
-function TabEventos({
- 
-}) 
-
-{
+function TabEventos({ athletes }) {
 
   // --- Estados de Eventos ---
   const [events, setEvents] = useState([]); 
-  const [eventTitle, setEventTitle] = useState('');
+  const [eventName, setEventName] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [eventMessage, setEventMessage] = useState('');
 
+  // --- Estados de Inscrição ---
+  const [selectedEventId, setSelectedEventId] = useState("");
+  const [selectedAthleteId, setSelectedAthleteId] = useState("");
+  const [subscribeMessage, setSubscribeMessage] = useState("");
+
+  // --- BUSCA INICIAL ---
+  const fetchEvents = async () => {
+      try {
+          const res = await fetch("http://localhost:3001/events");
+          if(!res.ok) throw new Error("Erro ao buscar eventos");
+          const data = await res.json();
+          setEvents(data);
+      } catch (err) {
+          console.error("Erro:", err);
+      }
+  };
+
+  useEffect(() => {
+     fetchEvents();
+  }, []);
+
+  // --- 1. CRIAR EVENTO ---
   const handleCreateEvent = async (e) => {
-      e.preventDefault();
-      setEventMessage('Criando evento...');
-      const eventData = { title: eventTitle, event_date: eventDate, location: eventLocation, description: eventDescription };
-    
-    api.createEvent(eventData)
-        .then(data => {
-            setEventMessage(data.message);
-            setEventTitle(''); setEventDate(''); setEventLocation(''); setEventDescription('');
-            setEvents([data.newEvt, ...events]); // Atualiza o estado local
-        })
-        .catch(err => {
-            setEventMessage(`Erro: ${err.message || 'Falha ao criar evento.'}`);
+      e.preventDefault();
+      setEventMessage('Criando...');
+      
+      try {
+        const response = await fetch("http://localhost:3001/events", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: eventName, // Enviando como title para garantir
+                date: eventDate, 
+                location: eventLocation, 
+                description: eventDescription 
+            })
         });
-};
 
-    const handleDeleteEvent = (eventId) => {
-        if (!window.confirm('Tem certeza que deseja excluir este evento?')) return;
-    
-    api.deleteEvent(eventId)
-        .then(data => {
-            setEvents(events.filter(event => event.id !== eventId));
-            alert(data.message || 'Evento excluído com sucesso!');
-        })
-        .catch(err => {
-            alert(`Erro: ${err.message}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            setEventMessage("Evento criado com sucesso!");
+            setEventName(''); setEventDate(''); setEventLocation(''); setEventDescription('');
+            fetchEvents(); 
+        } else {
+            setEventMessage(`Erro: ${data.message}`);
+        }
+      } catch (err) {
+        setEventMessage("Erro de conexão.");
+        console.error(err);
+      }
+  };
+
+  // --- 2. INSCREVER ATLETA ---
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!selectedEventId || !selectedAthleteId) {
+        alert("Selecione um evento e um atleta.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3001/events/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: selectedAthleteId, eventId: selectedEventId }),
         });
-};
 
-// --- Busca os eventos quando o componente é montado ---
-     useEffect(() => {
-       console.log("TabEventos montado. Buscando eventos...");
-       api.fetchEvents()
-         .then(setEvents)
-         .catch(err => console.error("Erro ao buscar eventos:", err));
-     }, []); // O [] garante que isso roda só uma vez
+        const data = await response.json();
 
-   return (
-    <div className="tab-content">
-      <h2 className="section-title">Gerenciamento de Eventos</h2>
-      <div className="forms-container">
+        if (response.ok) {
+            setSubscribeMessage("Inscrição realizada!");
+            setSelectedAthleteId(""); 
+            setTimeout(() => setSubscribeMessage(""), 3000);
+        } else {
+            alert(data.message || "Erro ao inscrever.");
+        }
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro de conexão.");
+    }
+  };
 
-        <div className="form-card">
-          <h2>Criar Novo Evento</h2>
-          {/* MUDANÇA AQUI: 
-            'onSubmit={onCreateEvent}' virou 'onSubmit={handleCreateEvent}' 
-          */}
-          <form onSubmit={handleCreateEvent}>
-            <div className="form-group">
-              <label>Título do Evento</label>
-              {/* MUDANÇA AQUI: 
-                  'onSetEventTitle' virou 'setEventTitle'
-                */}
-              <input type="text" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} required />
-            </div>
-            <div className="form-group">
-              <label>Data do Evento</label>
-              {/* ... e aqui 'setEventDate' */}
-              <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} required />
-            </div>
-            <div className="form-group">
-              <label>Local</label>
-              {/* ... e aqui 'setEventLocation' */}
-              <input type="text" value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} required />
-            </div>
-            <div className="form-group">
-              <label>Descrição (Opcional)</label>
-              {/* ... e aqui 'setEventDescription' */}
-              <textarea value={eventDescription} onChange={(e) => setEventDescription(e.target.value)} />
-            </div>
-            <button type="submit" className="button-primary">Criar Evento</button>
-            {eventMessage && <p className="feedback-message">{eventMessage}</p>}
-          </form>
-        </div>
+  // --- 3. DELETAR (Simulação) ---
+  const handleDeleteEvent = (id) => {
+      if(!window.confirm("Deseja excluir?")) return;
+      alert("Funcionalidade de excluir em breve.");
+  };
 
-        <div className="form-card">
-          <h2>Eventos Cadastrados ({events.length})</h2>
-          <div className="event-list">
-            {events.length > 0 ? (
-              events.map(event => (
-                <div key={event.id} className="event-item">
-                  <div className="event-details">
-                    <strong>{event.title}</strong>
-                    <span>Data: {new Date(event.event_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
-                    <span>Local: {event.location}</span>
-                  </div>
-                  {/* MUDANÇA AQUI: 
-                      'onDeleteEvent' virou 'handleDeleteEvent'
-                    */}
-                  <button onClick={() => handleDeleteEvent(event.id)} className="button-danger">Excluir</button>
-                </div>
-              ))
-            ) : ( <p>Nenhum evento cadastrado.</p> )}
-          </div>
-        </div>
+  return (
+    <div className="tab-content">
+      {/* REMOVI O TÍTULO DUPLICADO DAQUI */}
+      
+      <div className="forms-container">
 
-      </div>
-    </div>
-  );
+        {/* --- CARD 1: CRIAR EVENTO --- */}
+        <div className="form-card">
+          <h3>Criar Novo Evento</h3>
+          <form onSubmit={handleCreateEvent}>
+            <div className="form-group">
+              <label>Nome do Evento</label>
+              <input type="text" value={eventName} onChange={(e) => setEventName(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Data</label>
+              <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Local</label>
+              <input type="text" value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Descrição</label>
+              <textarea value={eventDescription} onChange={(e) => setEventDescription(e.target.value)} />
+            </div>
+            <button type="submit" className="button-primary">Criar Evento</button>
+            {eventMessage && <p className="feedback-message">{eventMessage}</p>}
+          </form>
+        </div>
+
+        {/* --- CARD 2: INSCREVER ATLETA --- */}
+        <div className="form-card"> 
+            <h3>Inscrever Atleta</h3>
+            <form onSubmit={handleSubscribe}>
+                <div className="form-group">
+                    <label>Selecione o Evento</label>
+                    <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)}>
+                        <option value="">-- Selecione --</option>
+                        {events.map(ev => (
+                            <option key={ev.id} value={ev.id}>
+                                {ev.title || ev.name} - {new Date(ev.event_date || ev.date).toLocaleDateString()}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="form-group">
+                    <label>Selecione o Atleta</label>
+                    <select value={selectedAthleteId} onChange={(e) => setSelectedAthleteId(e.target.value)}>
+                        <option value="">-- Selecione --</option>
+                        {athletes && athletes.map(atl => (
+                            <option key={atl.id} value={atl.id}>{atl.username} ({atl.category})</option>
+                        ))}
+                    </select>
+                </div>
+
+                <button type="submit" className="button-primary">Confirmar Inscrição</button>
+                {subscribeMessage && <p className="feedback-message">{subscribeMessage}</p>}
+            </form>
+        </div>
+
+        {/* --- CARD 3: LISTA --- */}
+        <div className="table-card">
+          <h3>Eventos Cadastrados ({events.length})</h3>
+          <div className="event-list">
+            {events.length > 0 ? (
+              events.map(ev => (
+                <div key={ev.id} className="event-item">
+                  <div className="event-details">
+                    <strong>{ev.name || ev.title}</strong>
+                    <span>Data: {new Date(ev.event_date || ev.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
+                    <span>Local: {ev.location}</span>
+                  </div>
+                  <button onClick={() => handleDeleteEvent(ev.id)} className="button-danger" style={{opacity: 0.5}}>Excluir</button>
+                </div>
+              ))
+            ) : ( <p>Nenhum evento cadastrado.</p> )}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
 export default TabEventos;

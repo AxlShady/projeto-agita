@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 
-// Garante que AMBAS as rotas estão aqui
+// Rota de Registro (Cadastro)
+// Verifica se a função 'register' existe antes de usar
+router.post('/register', authController.register);
+
+// Rota de Login
 router.post('/login', authController.login);
-router.post('/register', authController.createUser);
 
 module.exports = router;

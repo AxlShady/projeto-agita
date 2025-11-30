@@ -1,12 +1,14 @@
-// routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-// Rota para GET /users/athletes
-router.get('/athletes', userController.getAthleteUsers);
+// Listar atletas (dropdowns e tabelas)
+router.get('/athletes', userController.getAthletes);
 
-// Rota para GET /users/:id/details
+// Detalhes de um atleta específico
 router.get('/:id/details', userController.getUserDetails);
+
+// --- NOVA ROTA: Editar atleta ---
+router.put('/:id', userController.updateUser);
 
 module.exports = router;

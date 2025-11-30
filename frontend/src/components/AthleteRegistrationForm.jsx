@@ -1,81 +1,107 @@
 import React, { useState } from 'react';
-// (Adicione um CSS se desejar, ex: import './AthleteRegistrationForm.css';)
 
-function AthleteRegistrationForm({ onRegistrationSuccess }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState(''); // Para feedback de sucesso ou erro
+function AthleteRegistrationForm({ onRegisterSuccess }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  
+  // Novos Estados
+  const [category, setCategory] = useState('Mirim');
+  const [admissionDate, setAdmissionDate] = useState('');
+  
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage(''); // Limpa mensagens anteriores
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setMessage('');
 
-    const userData = {
-      username,
-      password,
-      user_type: 'atleta' 
-    };
+    try {
+      const response = await fetch('http://localhost:3001/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            username, 
+            password, 
+            user_type: 'atleta',
+            category: category,           // Enviando categoria
+            admission_date: admissionDate // Enviando data
+        }),
+      });
 
-    try {
-      // --- ✅ CORREÇÃO AQUI ---
-      // A URL estava errada (/users/create). A correta é /register.
-      const response = await fetch('http://localhost:3001/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+      const data = await response.json();
 
-      const data = await response.json();
+      if (response.ok) {
+        setMessage('Atleta cadastrado com sucesso!');
+        setUsername('');
+        setPassword('');
+        setAdmissionDate('');
+        if (onRegisterSuccess) onRegisterSuccess(); // Atualiza a lista se necessário
+      } else {
+        setMessage(data.message || 'Erro ao cadastrar.');
+      }
+    } catch (error) {
+      setMessage('Erro de conexão com o servidor.');
+    }
+  };
 
-      if (response.ok) {
-        setMessage(`Atleta "${username}" cadastrado com sucesso!`);
-        setUsername(''); // Limpa o formulário
-        setPassword('');
-        
-        if (onRegistrationSuccess) {
-          onRegistrationSuccess(); // Avisa o AdminDashboard para atualizar a lista
-        }
-      } else {
-        setMessage(`Erro: ${data.message || 'Falha ao cadastrar.'}`);
-      }
-    } catch (err) {
-      console.error('Erro de rede:', err);
-      // Isso não deve mais acontecer, pois a URL está correta
-      setMessage('Erro de conexão. O back-end está rodando?');
-    }
-  };
+  return (
+    <div className="form-card">
+      <h3>Cadastrar Novo Atleta</h3>
+      <form onSubmit={handleRegister}>
+        <label>Nome de Usuário (Login)</label>
+        <input
+          type="text"
+          placeholder="Ex: ana.silva"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
 
-  return (
-    <div className="form-card">
-      <h2 className="section-title">Cadastrar Novo Atleta</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="athlete-username">Nome de Usuário (Login)</label>
-          <input
-            type="text"
-            id="athlete-username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="athlete-password">Senha Inicial</label>
-          <input
-            type="password"
-            id="athlete-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="button-primary">Cadastrar Atleta</button>
-        {message && <p className="feedback-message">{message}</p>}
-      </form>
-    </div>
-  );
+        <label>Senha Inicial</label>
+        <input
+          type="password"
+          placeholder="******"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+
+        {/* Novos Campos */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ flex: 1 }}>
+                <label>Categoria</label>
+                <select 
+                    value={category} 
+                    onChange={(e) => setCategory(e.target.value)}
+                    style={{ width: '100%', padding: '10px', marginTop: '5px' }}
+                >
+                    <option value="Mirim">Mirim</option>
+                    <option value="Pré-Infantil">Pré-Infantil</option>
+                    <option value="Infantil">Infantil</option>
+                    <option value="Juvenil">Juvenil</option>
+                    <option value="Adulto">Adulto</option>
+                </select>
+            </div>
+
+            <div style={{ flex: 1 }}>
+                <label>Atleta Desde</label>
+                <input
+                    type="date"
+                    value={admissionDate}
+                    onChange={(e) => setAdmissionDate(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                />
+            </div>
+        </div>
+
+        <button type="submit" className="btn-submit" style={{ marginTop: '20px' }}>
+          Cadastrar Atleta
+        </button>
+      </form>
+
+      {message && <p className={`msg-feedback ${message.includes('sucesso') ? 'success' : 'error'}`}>{message}</p>}
+    </div>
+  );
 }
 
 export default AthleteRegistrationForm;
