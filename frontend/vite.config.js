@@ -7,7 +7,7 @@ export default defineConfig({
     proxy: {
  
       "/api": {
-      target: "http://https://projeto-agita.onrender.com",
+      target: "https://projeto-agita.onrender.com",
      changeOrigin: true,
      },
    },

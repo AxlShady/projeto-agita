@@ -27,10 +27,10 @@ function AthleteDetails({ userId, onBack }) {
           gradesRes,
           paymentsRes
         ] = await Promise.all([
-          fetch(`http://https://projeto-agita.onrender.com/users/${userId}/details`),
-          fetch(`http://https://projeto-agita.onrender.com/documents/${userId}`),
-          fetch(`http://https://projeto-agita.onrender.com/grades-report/${userId}`),
-          fetch(`http://https://projeto-agita.onrender.com/payments-report/${userId}`)
+          fetch(`https://projeto-agita.onrender.com/users/${userId}/details`),
+          fetch(`https://projeto-agita.onrender.com/documents/${userId}`),
+          fetch(`https://projeto-agita.onrender.com/grades-report/${userId}`),
+          fetch(`https://projeto-agita.onrender.com/payments-report/${userId}`)
         ]);
 
         // Verificamos se todas as requisições foram OK
@@ -60,7 +60,7 @@ function AthleteDetails({ userId, onBack }) {
   const handleDeleteDocument = async (docId) => {
     if (!window.confirm('Tem certeza que deseja excluir este documento? O arquivo será apagado permanentemente.')) return;
     try {
-      const response = await fetch(`http://https://projeto-agita.onrender.com/documents/${docId}`, { method: 'DELETE' });
+      const response = await fetch(`https://projeto-agita.onrender.com/documents/${docId}`, { method: 'DELETE' });
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
@@ -74,7 +74,7 @@ function AthleteDetails({ userId, onBack }) {
   const handleDeleteGrade = async (gradeId) => {
     if (!window.confirm('Tem certeza que deseja excluir esta nota?')) return;
     try {
-      const response = await fetch(`http://https://projeto-agita.onrender.com/grades/${gradeId}`, { method: 'DELETE' });
+      const response = await fetch(`https://projeto-agita.onrender.com/grades/${gradeId}`, { method: 'DELETE' });
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
@@ -87,7 +87,7 @@ function AthleteDetails({ userId, onBack }) {
 
   const handleUpdatePaymentStatus = async (paymentId, newStatus) => {
     try {
-      const response = await fetch(`http://https://projeto-agita.onrender.com/payments/${paymentId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
+      const response = await fetch(`https://projeto-agita.onrender.com/payments/${paymentId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
       const data = await response.json();
       if (response.ok) {
         setPayments(payments.map(p => p.id === paymentId ? { ...p, status: newStatus } : p )); // Atualiza estado local
@@ -100,7 +100,7 @@ function AthleteDetails({ userId, onBack }) {
   const handleDeletePayment = async (paymentId) => {
     if (!window.confirm('Tem certeza que deseja excluir esta cobrança?')) return;
     try {
-      const response = await fetch(`http://https://projeto-agita.onrender.com/payments/${paymentId}`, { method: 'DELETE' });
+      const response = await fetch(`https://projeto-agita.onrender.com/payments/${paymentId}`, { method: 'DELETE' });
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
@@ -147,7 +147,7 @@ function AthleteDetails({ userId, onBack }) {
                 <span className="col-type">{doc.document_type}</span>
                 <span className="col-date">{new Date(doc.upload_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
                 <span className="col-link">
-                  <a href={`http://https://projeto-agita.onrender.com/uploads/${doc.filename}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://projeto-agita.onrender.com/uploads/${doc.filename}`} target="_blank" rel="noopener noreferrer">
                     Ver Arquivo
                   </a>
                 </span>

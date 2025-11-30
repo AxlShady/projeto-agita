@@ -28,7 +28,7 @@ function AdminDashboard({ user = testUser, onLogout = () => console.log('Logout!
           const athletesData = await api.fetchAthletes();
           setAthletes(athletesData);
           
-          const resEvents = await fetch("http://https://projeto-agita.onrender.com/events");
+          const resEvents = await fetch("https://projeto-agita.onrender.com/events");
           const eventsData = await resEvents.json();
           setEvents(eventsData);
         } catch (error) {

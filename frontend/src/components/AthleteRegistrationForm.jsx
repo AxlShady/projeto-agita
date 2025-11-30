@@ -15,7 +15,7 @@ function AthleteRegistrationForm({ onRegisterSuccess }) {
     setMessage('');
 
     try {
-      const response = await fetch('http://https://projeto-agita.onrender.com/api/register', {
+      const response = await fetch('https://projeto-agita.onrender.com/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

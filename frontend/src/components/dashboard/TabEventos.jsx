@@ -18,7 +18,7 @@ function TabEventos({ athletes }) {
   // --- BUSCA INICIAL ---
   const fetchEvents = async () => {
       try {
-          const res = await fetch("http://https://projeto-agita.onrender.com/events");
+          const res = await fetch("https://projeto-agita.onrender.com/events");
           if(!res.ok) throw new Error("Erro ao buscar eventos");
           const data = await res.json();
           setEvents(data);
@@ -37,7 +37,7 @@ function TabEventos({ athletes }) {
       setEventMessage('Criando...');
       
       try {
-        const response = await fetch("http://https://projeto-agita.onrender.com/events", {
+        const response = await fetch("https://projeto-agita.onrender.com/events", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -72,7 +72,7 @@ function TabEventos({ athletes }) {
     }
 
     try {
-        const response = await fetch("http://https://projeto-agita.onrender.com/events/subscribe", {
+        const response = await fetch("https://projeto-agita.onrender.com/events/subscribe", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: selectedAthleteId, eventId: selectedEventId }),

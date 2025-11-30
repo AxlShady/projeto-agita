@@ -24,7 +24,7 @@ function FileUpload(props) {
     formData.append('user_id', props.userId); 
 
     try {
-      const response = await fetch('http://https://projeto-agita.onrender.com/documents/upload', {
+      const response = await fetch('https://projeto-agita.onrender.com/documents/upload', {
         method: 'POST',
         // ATENÇÃO: Não usamos 'Content-Type': 'application/json' com FormData
         body: formData,

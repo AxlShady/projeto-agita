@@ -13,7 +13,7 @@ function TabCadastro() {
     // Carregar lista de atletas
     const loadAthletes = async () => {
         try {
-            const response = await fetch('http://https://projeto-agita.onrender.com/users/athletes');
+            const response = await fetch('https://projeto-agita.onrender.com/users/athletes');
             const data = await response.json();
             setAtletas(data);
         } catch (error) {
@@ -43,7 +43,7 @@ function TabCadastro() {
     // Salvar edição
     const saveEdit = async (id) => {
         try {
-            const response = await fetch(`http://https://projeto-agita.onrender.com/users/${id}`, {
+            const response = await fetch(`https://projeto-agita.onrender.com/users/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
