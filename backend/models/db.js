@@ -1,26 +1,22 @@
-// frontend/src/models/db.js
-
 const mysql = require('mysql2');
 
-// Configuração do Banco de Dados
-const db = mysql.createConnection({
-    host: 'centerbeam.proxy.rlwy.net',
+
+const connectionConfig = process.env.DATABASE_URL || {
+    host: 'centerbeam.proxy.rlwy.net',
     port: 41067,
-    user: 'root',
-    password: 'czfNILjRdUSXzIYtyZdBLMTAkpThRQMO', // Sua senha
-    database: 'railway'
-});
+    user: 'root',
+    password: 'czfNILjRdUSXzIYtyZdBLMTAkpThRQMO', 
+    database: 'railway'
+};
 
-// Conecta ao Banco de Dados
+const db = mysql.createConnection(connectionConfig);
+
 db.connect(err => {
-    if (err) {
-        console.error('Erro ao conectar ao MySQL:', err.stack);
-        return;
-    }
-    console.log('Conectado ao banco de dados MySQL com o ID ' + db.threadId);
+    if (err) {
+        console.error('Erro Crítico: Não foi possível conectar ao MySQL:', err.stack);
+        return;
+    }
+    console.log('Sucesso: Conectado ao banco de dados MySQL!');
 });
 
-// ESTA É A LINHA MAIS IMPORTANTE!
-// Ela exporta a variável 'db' (a conexão) para que outros arquivos
-// (como o userController) possam usá-la.
-module.exports = db;
+module.exports = db; 
