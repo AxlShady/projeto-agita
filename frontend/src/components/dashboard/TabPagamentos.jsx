@@ -18,7 +18,7 @@ function TabPagamentos({ athletes }) {
     const fetchPayments = async () => {
         try {
             // Rota para listar todos os pagamentos (para o histórico do Admin)
-            const res = await fetch("http://localhost:3001/payments");
+            const res = await fetch("http://https://projeto-agita.onrender.com/payments");
             if (res.ok) {
                 const data = await res.json();
                 setPayments(data);
@@ -52,7 +52,7 @@ function TabPagamentos({ athletes }) {
 
         try {
             // Endereço CORRETO para o backend
-            const response = await fetch("http://localhost:3001/payments", {
+            const response = await fetch("http://https://projeto-agita.onrender.com/payments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(paymentData)
@@ -79,7 +79,7 @@ function TabPagamentos({ athletes }) {
     const handleDeletePayment = async (id) => {
         if (!window.confirm("Deseja excluir este registro de pagamento?")) return;
         try {
-            const response = await fetch(`http://localhost:3001/payments/${id}`, {
+            const response = await fetch(`http://https://projeto-agita.onrender.com/payments/${id}`, {
                 method: "DELETE"
             });
             if (response.ok) {

@@ -1,5 +1,5 @@
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://https://projeto-agita.onrender.com';
 
 // Função auxiliar para chamadas fetch
 async function apiFetch(endpoint, options = {}) {

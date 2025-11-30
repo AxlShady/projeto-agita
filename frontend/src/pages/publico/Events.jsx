@@ -12,7 +12,7 @@ function Events() {
         const fetchEvents = async () => {
             try {
                 // Rota pública que busca todos os eventos
-                const response = await fetch("http://localhost:3001/events");
+                const response = await fetch("http://https://projeto-agita.onrender.com/events");
                 const data = await response.json();
                 setEvents(data);
                 setLoading(false);

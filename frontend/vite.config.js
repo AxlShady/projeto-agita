@@ -7,7 +7,7 @@ export default defineConfig({
     proxy: {
  
       "/api": {
-      target: "http://localhost:3001",
+      target: "http://https://projeto-agita.onrender.com",
      changeOrigin: true,
      },
    },

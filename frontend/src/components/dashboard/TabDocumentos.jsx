@@ -139,7 +139,7 @@ function TabDocumentos({ athletes = [] }) {
               <span className="col-type">{doc.document_type}</span>
               <span className="col-date">{new Date(doc.upload_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
               <span className="col-link">
-                <a href={`http://localhost:3001/uploads/${doc.filename}`} target="_blank" rel="noopener noreferrer">Ver Arquivo</a>
+                <a href={`http://https://projeto-agita.onrender.com/uploads/${doc.filename}`} target="_blank" rel="noopener noreferrer">Ver Arquivo</a>
               </span>
               <span className="col-actions">
                 <button onClick={() => handleDeleteDocument(doc.id)} className="button-danger small">Excluir</button>

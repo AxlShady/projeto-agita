@@ -17,7 +17,7 @@ function TabNotas({ athletes, events }) {
 
   const fetchGrades = async () => {
       try {
-          const res = await fetch("http://localhost:3001/grades");
+          const res = await fetch("http://https://projeto-agita.onrender.com/grades");
           if(res.ok) {
             const data = await res.json();
             setGrades(data);
@@ -35,7 +35,7 @@ function TabNotas({ athletes, events }) {
       const gradeData = { user_id: selectedAthlete, event_id: selectedEvent, category, apparatus, score, date_graded: date };
 
       try {
-          const response = await fetch("http://localhost:3001/grades", {
+          const response = await fetch("http://https://projeto-agita.onrender.com/grades", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(gradeData)
@@ -52,7 +52,7 @@ function TabNotas({ athletes, events }) {
   const handleDeleteGrade = async (id) => {
       if(!window.confirm("Excluir nota?")) return;
       try {
-          const response = await fetch(`http://localhost:3001/grades/${id}`, { method: "DELETE" });
+          const response = await fetch(`http://https://projeto-agita.onrender.com/grades/${id}`, { method: "DELETE" });
           if(response.ok) fetchGrades();
       } catch (error) { console.error(error); }
   };

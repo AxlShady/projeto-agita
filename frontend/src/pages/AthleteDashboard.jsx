@@ -19,17 +19,17 @@ function AthleteDashboard() {
       setUser(parsedUser);
 
       // Buscando dados...
-      fetch(`http://localhost:3001/events/athlete/${parsedUser.id}`)
+      fetch(`http://https://projeto-agita.onrender.com/events/athlete/${parsedUser.id}`)
         .then((res) => res.json())
         .then((data) => setEvents(data || []))
         .catch((err) => console.error(err));
 
-      fetch(`http://localhost:3001/grades/athlete/${parsedUser.id}`)
+      fetch(`http://https://projeto-agita.onrender.com/grades/athlete/${parsedUser.id}`)
         .then((res) => res.json())
         .then((data) => setGrades(data || []))
         .catch((err) => console.error(err));
 
-      fetch(`http://localhost:3001/payments/athlete/${parsedUser.id}`)
+      fetch(`http://https://projeto-agita.onrender.com/payments/athlete/${parsedUser.id}`)
         .then((res) => res.json())
         .then((data) => setPayments(data || []))
         .catch((err) => console.error(err));
