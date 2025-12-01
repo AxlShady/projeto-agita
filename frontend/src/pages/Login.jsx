@@ -49,8 +49,8 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <div className="login-page-container">
+      <div className="login-box">
         
         <div className="login-brand">
           <img src={logo} alt="Logo Agita" className="login-logo" />
