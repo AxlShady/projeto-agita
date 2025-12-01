@@ -87,7 +87,7 @@ function Login({ onLoginSuccess }) {
           {error && <div className="error-alert">{error}</div>}
           
           {/* BOTÃO PRINCIPAL */}
-          <button type="submit" className="btn-login">ENTRAR</button>
+          <button type="submit" className="btn-entrar">ENTRAR</button>
 
           {/* NOVO LINK: VOLTAR PARA O INÍCIO */}
           <Link to="/" className="link-voltar">Voltar à Página Inicial</Link>
